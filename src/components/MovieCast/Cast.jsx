@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { fetchCast } from '../../services/movieApi';
 import { MovieText, Title, SecondaryMovieTitle } from '../../common/Style';
 import { ImageCast, CastItem } from './CastStyled';
+import { Loader } from '../Loader/Loader';
 import { setSliderSettings } from '../slider/slider';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -12,23 +13,33 @@ import 'slick-carousel/slick/slick-theme.css';
 
 export default function Cast() {
   const [actors, setActors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { moviesId } = useParams();
 
   useEffect(() => {
     const fetch = async () => {
-      await fetchCast(moviesId).then(data => setActors(data.cast));
+      setLoading(true);
+      try {
+        await fetchCast(moviesId).then(data => setActors(data.cast));
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetch();
   }, [moviesId]);
 
-  if (actors.length === 0) {
-    return <Title>No actors for this movie</Title>;
-  }
+  const showNoActors = !loading && actors.length === 0;
 
   return (
     <>
+      {loading && <Loader />}
+      {showNoActors && <Title>No actors for this movie</Title>}
       <Slider {...setSliderSettings(actors.length)} width="100%">
-        {actors &&
+        {!error &&
+          actors &&
           actors.map(({ id, character, name, profile_path }) => (
             <CastItem key={id}>
               {profile_path ? (

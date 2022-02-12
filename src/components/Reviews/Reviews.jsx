@@ -4,30 +4,42 @@ import { useParams } from 'react-router-dom';
 import { fetchReviews } from '../../services/movieApi';
 import { Title, SecondaryMovieTitle } from '../../common/Style';
 import { ReviewsItem, ReviewsList, ReviewText } from './ReviewsStyled';
+import { Loader } from '../Loader/Loader';
 
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
   const { moviesId } = useParams();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetch = async () => {
-      await fetchReviews(moviesId).then(data => setReviews(data.results));
+      setLoading(true);
+      try {
+        await fetchReviews(moviesId).then(data => setReviews(data.results));
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetch();
   }, [moviesId]);
 
-  if (reviews.length === 0) {
-    return <Title>No reviews for this movie</Title>;
-  }
+  const showNoReviews = !loading && reviews.length === 0;
+
   return (
     <>
+      {loading && <Loader />}
+      {showNoReviews && <Title>No reviews for this movie</Title>}
       <ReviewsList>
-        {reviews.map(review => (
-          <ReviewsItem key={review.id}>
-            <SecondaryMovieTitle>{review.author} :</SecondaryMovieTitle>
-            <ReviewText>{review.content}</ReviewText>
-          </ReviewsItem>
-        ))}
+        {!error &&
+          reviews.map(review => (
+            <ReviewsItem key={review.id}>
+              <SecondaryMovieTitle>{review.author} :</SecondaryMovieTitle>
+              <ReviewText>{review.content}</ReviewText>
+            </ReviewsItem>
+          ))}
       </ReviewsList>
     </>
   );

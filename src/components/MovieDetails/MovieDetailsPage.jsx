@@ -13,80 +13,99 @@ import {
   GenresList,
   FilmMore,
 } from './MovieDetailsStyled';
-
-import { MainMovieTitle, Img, SecondaryMovieTitle } from '../../common/Style';
+import { Loader } from '../Loader/Loader';
+import {
+  MainMovieTitle,
+  Img,
+  Title,
+  SecondaryMovieTitle,
+} from '../../common/Style';
 
 export default function MovieDetailsPage() {
-  const [movieObj, setMovieObj] = useState({});
-
+  const [movies, setMovies] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   let { moviesId } = useParams();
 
   const location = useLocation();
   const locationFrom = location?.state?.from ?? '/';
 
   useEffect(() => {
-    const oneMovie = () => {
-      fetchMovieDetails(moviesId).then(data => {
-        setMovieObj(data);
-      });
+    const oneMovie = async () => {
+      setLoading(true);
+      try {
+        await fetchMovieDetails(moviesId).then(data => {
+          setMovies(data);
+        });
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
     };
     oneMovie();
   }, [moviesId]);
 
-  const releaseData = new Date(movieObj.release_date);
-
+  const releaseData = new Date(movies.release_date);
   const { release_date, title, vote_average, overview, genres, poster_path } =
-    movieObj;
+    movies;
+
   return (
     <>
       <LinkReturn to={locationFrom}> ◀ BACK </LinkReturn>
-      <Section>
-        {poster_path ? (
-          <Img
-            src={`https://image.tmdb.org/t/p/w300${poster_path}`}
-            alt=""
-            min-width={'100px'}
-          />
-        ) : (
-          <Img src={noPhoto} alt="" />
-        )}
-
-        <FilmInfoContainer>
-          <MainMovieTitle>
-            {title} ({releaseData.getFullYear(release_date)})
-          </MainMovieTitle>
-          <SecondaryMovieTitle>
-            User score: {vote_average * 10}%
-          </SecondaryMovieTitle>
-          <SecondaryMovieTitle>Genres:</SecondaryMovieTitle>
-          <GenresList>
-            {genres &&
-              genres.map(({ name }) => (
-                <GenresItem key={name}>{name}</GenresItem>
-              ))}
-          </GenresList>
-          <SecondaryMovieTitle>Overview </SecondaryMovieTitle>
-          {overview ? (
-            <Paragraph>{overview}</Paragraph>
+      {loading && <Loader />}
+      {error && <Title>Ups...there is nothing, try again</Title>}
+      {!error && (
+        <Section>
+          {poster_path ? (
+            <Img
+              src={`https://image.tmdb.org/t/p/w300${poster_path}`}
+              alt=""
+              min-width={'100px'}
+            />
           ) : (
-            <Paragraph>No overview</Paragraph>
+            <Img src={noPhoto} alt="" />
           )}
-        </FilmInfoContainer>
-      </Section>
-      <Section>
-        <LinkCast
-          to={`/movies/${moviesId}/cast`}
-          state={{ from: locationFrom }}
-        >
-          Cast
-        </LinkCast>
-        <LinkRewiews
-          to={`/movies/${moviesId}/reviews`}
-          state={{ from: locationFrom }}
-        >
-          Reviews
-        </LinkRewiews>
-      </Section>
+
+          <FilmInfoContainer>
+            <MainMovieTitle>
+              {title} ({releaseData.getFullYear(release_date)})
+            </MainMovieTitle>
+            <SecondaryMovieTitle>
+              User score: {vote_average * 10}%
+            </SecondaryMovieTitle>
+            <SecondaryMovieTitle>Genres:</SecondaryMovieTitle>
+            <GenresList>
+              {genres &&
+                genres.map(({ name }) => (
+                  <GenresItem key={name}>{name}</GenresItem>
+                ))}
+            </GenresList>
+            <SecondaryMovieTitle>Overview </SecondaryMovieTitle>
+            {overview ? (
+              <Paragraph>{overview}</Paragraph>
+            ) : (
+              <Paragraph>No overview</Paragraph>
+            )}
+          </FilmInfoContainer>
+        </Section>
+      )}
+      {!error && (
+        <Section>
+          <LinkCast
+            to={`/movies/${moviesId}/cast`}
+            state={{ from: locationFrom }}
+          >
+            Cast
+          </LinkCast>
+          <LinkRewiews
+            to={`/movies/${moviesId}/reviews`}
+            state={{ from: locationFrom }}
+          >
+            Reviews
+          </LinkRewiews>
+        </Section>
+      )}
       <FilmMore>
         <Outlet />
       </FilmMore>
