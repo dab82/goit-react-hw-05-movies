@@ -1,23 +1,20 @@
 import PropTypes from 'prop-types';
-import { MovieItemCard } from '../MoviePage/MovieItemCard';
+import { MovieItemCard } from '../MovieItemCard/MovieItemCard';
 import { MovieList } from '../../common/Style';
 
 export function MovieHomePageCard({ films }) {
   return (
     <MovieList>
-      {films.map(
-        ({ id, title, name, backdrop_path, vote_count, vote_average }) => (
-          <MovieItemCard
-            key={id}
-            id={id}
-            name={name}
-            title={title}
-            backdrop_path={backdrop_path}
-            vote_count={vote_count}
-            vote_average={vote_average}
-          />
-        )
-      )}
+      {films.map(({ id, title, name, backdrop_path, release_date }) => (
+        <MovieItemCard
+          key={id}
+          id={id}
+          name={name}
+          title={title}
+          backdrop_path={backdrop_path}
+          release_date={release_date}
+        />
+      ))}
     </MovieList>
   );
 }
@@ -29,8 +26,7 @@ MovieHomePageCard.propTypes = {
       title: PropTypes.string,
       name: PropTypes.string,
       backdrop_path: PropTypes.string.isRequired,
-      vote_count: PropTypes.number.isRequired,
-      vote_average: PropTypes.number.isRequired,
+      // release_date: PropTypes.number,
     })
   ),
 };

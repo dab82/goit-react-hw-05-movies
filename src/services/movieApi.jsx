@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 const BASE_URL = 'https://api.themoviedb.org/3/';
 const KEY = '02589241ae4d8ab43f8f4c55a27ffcb3';
@@ -36,15 +36,18 @@ export function fetchReviews(movieId) {
   );
 }
 
-// fetchSearchMovie.propTypes = {
-//   search: PropTypes.string.isRequired,
-// };
+fetchSearchMovie.propTypes = {
+  search: PropTypes.string.isRequired,
+};
 
-// fetchMovieDetails.propTypes = {
-//   id: PropTypes.number.isRequired,
-// };
+fetchMovieDetails.propTypes = {
+  id: PropTypes.number.isRequired,
+};
 
-// fetchAboutMovie.propTypes = {
-//   id: PropTypes.number.isRequired,
-//   about: PropTypes.string.isRequired,
-// };
+fetchReviews.propTypes = {
+  id: PropTypes.number.isRequired,
+};
+
+fetchCast.propTypes = {
+  id: PropTypes.number.isRequired,
+};

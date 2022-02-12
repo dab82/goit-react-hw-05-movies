@@ -15,9 +15,11 @@ export function MovieItemCard({
   title,
   name,
   backdrop_path,
-  vote_average,
+  release_date,
 }) {
   const location = useLocation();
+
+  const releaseData = new Date(release_date);
 
   return (
     <MovieItem key={id}>
@@ -33,7 +35,7 @@ export function MovieItemCard({
 
         <CardInfoContainer>
           <SecondaryMovieTitle>{title ? title : name}</SecondaryMovieTitle>
-          <MovieText>Average rating: {vote_average}</MovieText>
+          <MovieText>{releaseData.toLocaleDateString()}</MovieText>
         </CardInfoContainer>
       </LinkStyled>
     </MovieItem>

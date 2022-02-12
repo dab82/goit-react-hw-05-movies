@@ -72,8 +72,9 @@ const MovieItem = styled.li`
 
 const MovieText = styled.p`
   margin-bottom: 10px;
-  color: ${props => props.theme.colors.active};
+  color: ${props => props.theme.colors.grey};
   font-size: 14px;
+  font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
