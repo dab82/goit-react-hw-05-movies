@@ -54,7 +54,7 @@ export default function MovieDetailsPage() {
     <>
       <LinkReturn to={locationFrom}> ◀ BACK </LinkReturn>
       {loading && <Loader />}
-      {error && <Title>Ups...there is nothing, try again</Title>}
+      {error && <Title>Oops...there is nothing, try again</Title>}
       {!error && (
         <Section>
           {poster_path ? (
@@ -78,7 +78,7 @@ export default function MovieDetailsPage() {
             <GenresList>
               {genres &&
                 genres.map(({ name }) => (
-                  <GenresItem key={name}>{name}</GenresItem>
+                  <GenresItem key={name}>🎥 {name} |</GenresItem>
                 ))}
             </GenresList>
             <SecondaryMovieTitle>Overview </SecondaryMovieTitle>
